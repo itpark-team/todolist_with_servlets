@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Todo List With Servlets</title>
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous" defer></script>
+
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+<div class="vh-100">
+    <div class="container h-100">
+        <div class="row justify-content-center align-items-center h-100">
+            <div class="card rounded-3 col col-lg-9 col-xl-7">
+                <div class="card-body p-5">
+                    <h4 class="text-center mb-3">Планировщик задач</h4>
+
+                    <div class="row justify-content-center mb-3">
+                        <div class="col-lg-4 mb-3">
+                            <input type="date" id="input-date-field" class="form-control"/>
+                        </div>
+                        <div class="col-lg-4 mb-3">
+                            <input type="text" id="input-description-field" class="form-control"
+                                   placeholder="Введите задачу здесь"/>
+                        </div>
+                        <div class="col-lg-2">
+                            <button type="submit" class="btn btn-primary" onclick="buttonAddTodoItem_Click()">
+                                Сохранить
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="table-todo-items-div">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
