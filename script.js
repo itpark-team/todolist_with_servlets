@@ -1,54 +1,54 @@
 class TodoItem {
-    id;
-    date;
-    description;
+    #id;
+    #date;
+    #description;
 
     constructor(id, date, description) {
-        this.id = id;
-        this.date = date;
-        this.description = description;
+        this.#id = id;
+        this.#date = date;
+        this.#description = description;
     }
 
     getId() {
-        return this.id;
+        return this.#id;
     }
 
     getDate() {
-        return this.date;
+        return this.#date;
     }
 
     getDescription() {
-        return this.description;
+        return this.#description;
     }
 }
 
 class TodoItemsManager {
-    globalId;
-    todoItems;
+    #globalId;
+    #todoItems;
 
     constructor() {
-        this.globalId = 0;
-        this.todoItems = [];
+        this.#globalId = 0;
+        this.#todoItems = [];
     }
 
     addNew(date, description) {
-        this.globalId++;
+        this.#globalId++;
 
-        let todoItem = new TodoItem(this.globalId, date, description);
+        let todoItem = new TodoItem(this.#globalId, date, description);
 
-        this.todoItems.push(todoItem);
+        this.#todoItems.push(todoItem);
     }
 
     getAll() {
-        return this.todoItems;
+        return this.#todoItems;
     }
 
     deleteById(id) {
-        let findIndex = this.todoItems.findIndex(todoItem => {
+        let findIndex = this.#todoItems.findIndex(todoItem => {
             return todoItem.getId() === id;
         });
 
-        this.todoItems.splice(findIndex, 1);
+        this.#todoItems.splice(findIndex, 1);
     }
 
 }
@@ -137,22 +137,19 @@ function showTodoItems() {
     tableTodoItemsDiv.innerHTML = html;
 }
 
-window.onload = function () {
-    //load from server
+window.onload = async function () {
 
-    // let json = localStorage.getItem("todoItemsManager");
-    // if (json != null) {
-    //     let obj = JSON.parse(json);
-    //
-    //     todoItemsManager.globalId = obj.globalId;
-    //
-    //     let todos = [];
-    //     obj.todoItems.forEach(todo => {
-    //         todos.push(new TodoItem(todo.id, new Date(todo.date), todo.description));
-    //     })
-    //
-    //     todoItemsManager.todoItems = todos;
-    //
-    //     showTodoItems();
-    // }
+    let response = await fetch("http://localhost:8080/todoitems");
+
+    if (response.ok) {
+        let todoItems = await response.json();
+
+        console.log(todoItems);
+
+        todoItems.forEach(item => {
+            todoItemsManager.addNew(new Date(item.date), item.description);
+        });
+
+        showTodoItems();
+    }
 };
