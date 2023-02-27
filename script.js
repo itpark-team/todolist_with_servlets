@@ -1,64 +1,4 @@
-class TodoItem {
-    #id;
-    #date;
-    #description;
-
-    constructor(id, date, description) {
-        this.#id = id;
-        this.#date = date;
-        this.#description = description;
-    }
-
-    getId() {
-        return this.#id;
-    }
-
-    getDate() {
-        return this.#date;
-    }
-
-    getDescription() {
-        return this.#description;
-    }
-}
-
-class TodoItemsManager {
-    #globalId;
-    #todoItems;
-
-    constructor() {
-        this.#globalId = 0;
-        this.#todoItems = [];
-    }
-
-    addNew(date, description) {
-        this.#globalId++;
-
-        let todoItem = new TodoItem(this.#globalId, date, description);
-
-        this.#todoItems.push(todoItem);
-    }
-
-    getAll() {
-        return this.#todoItems;
-    }
-
-    deleteById(id) {
-        let findIndex = this.#todoItems.findIndex(todoItem => {
-            return todoItem.getId() === id;
-        });
-
-        this.#todoItems.splice(findIndex, 1);
-    }
-
-}
-
-let todoItemsManager = new TodoItemsManager();
-
-let inputDateField = document.getElementById("input-date-field");
-let inputDescriptionField = document.getElementById("input-description-field");
-let tableTodoItemsDiv = document.getElementById("table-todo-items-div");
-
+//region date utils
 function padTo2Digits(num) {
     return num.toString().padStart(2, '0');
 }
@@ -71,7 +11,13 @@ function formatDateToDDMMYYYY(date) {
     return [padTo2Digits(date.getDate()), padTo2Digits(date.getMonth() + 1), date.getFullYear()].join(".");
 }
 
-function buttonAddTodoItem_Click() {
+//endregion
+
+
+async function buttonAddTodoItem_Click() {
+    let inputDateField = document.getElementById("input-date-field");
+    let inputDescriptionField = document.getElementById("input-description-field");
+
     let date = new Date(inputDateField.value);
     let description = inputDescriptionField.value;
 
@@ -93,14 +39,20 @@ function buttonAddTodoItem_Click() {
         return;
     }
 
-    todoItemsManager.addNew(date, description);
+    let todoItem = {
+        id: 0,
+        date: formatDateToYYYYMMDD(date),
+        description: description
+    };
+
+    console.log(todoItem);
+
+    await saveToServer(todoItem);
 
     inputDateField.value = formatDateToYYYYMMDD(new Date());
     inputDescriptionField.value = "";
 
-    showTodoItems();
-
-    //add to server
+    await loadFromServerAndShowTodoItems();
 }
 
 function buttonDeleteTodoItem_Click(id) {
@@ -108,7 +60,9 @@ function buttonDeleteTodoItem_Click(id) {
     showTodoItems();
 }
 
-function showTodoItems() {
+function showTodoItems(todoItems) {
+    let tableTodoItemsDiv = document.getElementById("table-todo-items-div");
+
     let html = "";
 
     html += `<table class="table">`;
@@ -122,12 +76,12 @@ function showTodoItems() {
         </thead>`;
     html += `<tbody>`;
 
-    todoItemsManager.getAll().forEach((todoItem, index) => {
+    todoItems.forEach((todoItem, index) => {
         html += `<tr>
                 <td>${index + 1}</td>
-                <td>${formatDateToDDMMYYYY(todoItem.getDate())}</td>
-                <td>${todoItem.getDescription()}</td>
-                <td><button class="btn btn-danger" onclick="buttonDeleteTodoItem_Click(${todoItem.getId()})">Удалить</button></td>
+                <td>${formatDateToDDMMYYYY(new Date(todoItem.date))}</td>
+                <td>${todoItem.description}</td>
+                <td><button class="btn btn-danger" onclick="buttonDeleteTodoItem_Click(${todoItem.id})">Удалить</button></td>
             </tr>`;
     });
 
@@ -137,19 +91,23 @@ function showTodoItems() {
     tableTodoItemsDiv.innerHTML = html;
 }
 
-window.onload = async function () {
-
+async function loadFromServerAndShowTodoItems() {
     let response = await fetch("http://localhost:8080/todoitems");
 
     if (response.ok) {
         let todoItems = await response.json();
-
-        console.log(todoItems);
-
-        todoItems.forEach(item => {
-            todoItemsManager.addNew(new Date(item.date), item.description);
-        });
-
-        showTodoItems();
+        showTodoItems(todoItems);
     }
-};
+}
+
+async function saveToServer(todoItem) {
+    let response = await fetch('http://localhost:8080/todoitems', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+        },
+        body: JSON.stringify(todoItem)
+    });
+}
+
+window.onload = loadFromServerAndShowTodoItems
