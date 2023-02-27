@@ -45,8 +45,6 @@ async function buttonAddTodoItem_Click() {
         description: description
     };
 
-    console.log(todoItem);
-
     await saveToServer(todoItem);
 
     inputDateField.value = formatDateToYYYYMMDD(new Date());
@@ -55,9 +53,9 @@ async function buttonAddTodoItem_Click() {
     await loadFromServerAndShowTodoItems();
 }
 
-function buttonDeleteTodoItem_Click(id) {
-    todoItemsManager.deleteById(id);
-    showTodoItems();
+async function buttonDeleteTodoItem_Click(id) {
+    await deleteOnServer(id);
+    await loadFromServerAndShowTodoItems();
 }
 
 function showTodoItems(todoItems) {
@@ -101,12 +99,18 @@ async function loadFromServerAndShowTodoItems() {
 }
 
 async function saveToServer(todoItem) {
-    let response = await fetch('http://localhost:8080/todoitems', {
+    let response = await fetch("http://localhost:8080/todoitems", {
         method: "POST",
         headers: {
             "Content-Type": "application/json;charset=UTF-8"
         },
         body: JSON.stringify(todoItem)
+    });
+}
+
+async function deleteOnServer(id) {
+    let response = await fetch(`http://localhost:8080/todoitems?id=${id}`, {
+        method: "DELETE"
     });
 }
 
