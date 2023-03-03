@@ -95,6 +95,9 @@ async function loadFromServerAndShowTodoItems() {
     if (response.ok) {
         let todoItems = await response.json();
         showTodoItems(todoItems);
+    } else {
+        let error = await response.json()
+        alert(error.errorMessage);
     }
 }
 
