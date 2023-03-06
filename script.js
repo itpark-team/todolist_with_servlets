@@ -112,7 +112,7 @@ async function saveToServer(todoItem) {
 }
 
 async function deleteOnServer(id) {
-    let response = await fetch(`http://localhost:8080/todoitems?id=${id}`, {
+    let response = await fetch(`http://localhost:8080/todos/deleteById/${id}`, {
         method: "DELETE"
     });
 }
