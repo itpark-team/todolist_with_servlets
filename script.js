@@ -90,7 +90,7 @@ function showTodoItems(todoItems) {
 }
 
 async function loadFromServerAndShowTodoItems() {
-    let response = await fetch("http://localhost:8080/todoitems");
+    let response = await fetch("http://localhost:8080/todos/getAll");
 
     if (response.ok) {
         let todoItems = await response.json();
@@ -102,7 +102,7 @@ async function loadFromServerAndShowTodoItems() {
 }
 
 async function saveToServer(todoItem) {
-    let response = await fetch("http://localhost:8080/todoitems", {
+    let response = await fetch("http://localhost:8080/todos/addNew", {
         method: "POST",
         headers: {
             "Content-Type": "application/json;charset=UTF-8"
